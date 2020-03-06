@@ -40,6 +40,9 @@ RUN apt-get update && \
 
 ENTRYPOINT ["helmboot"]
 
+RUN groupadd -g 1000 bob && \
+    useradd -u 1000 -g 1000 -d /home/bob -m -k /etc/skel -s /bin/bash bob
+
 RUN curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86.tar.gz | tar xvz -C /usr/lib && \
     /usr/lib/google-cloud-sdk/install.sh --command-completion=true
 
@@ -49,3 +52,5 @@ RUN curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-re
     chmod 755 /usr/local/bin/kubectl
 
 COPY --from=build /go/src/github.com/jenkins-x-labs/helmboot/build/linux/helmboot /usr/bin/helmboot
+
+USER bob
