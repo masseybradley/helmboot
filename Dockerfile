@@ -19,8 +19,15 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 FROM centos:7
 
-RUN yum install -y git
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/google-cloud-sdk/bin
+
+RUN yum install -y \
+        git \
+        curl
 
 ENTRYPOINT ["helmboot"]
+
+RUN curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-283.0.0-linux-x86.tar.gz | tar xvz -C /usr/lib && \
+    /usr/lib/google-cloud-sdk/install.sh --command-completion=true
 
 COPY --from=build /go/src/github.com/jenkins-x-labs/helmboot/build/linux/helmboot /usr/bin/helmboot
