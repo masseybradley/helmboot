@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/jenkins-x/go-scm/scm"
+	"github.com/jenkins-x/jx/pkg/cmd/step/git/credentials"
 	"github.com/jenkins-x/jx/pkg/gits"
 	"github.com/jenkins-x/jx/pkg/log"
 	"github.com/jenkins-x/jx/pkg/util"
@@ -86,6 +87,15 @@ func (r *CreateRepository) CreateRepository(scmClient *scm.Client) (*scm.Reposit
 	}
 
 	log.Logger().Infof("creating git repository %s/%s on server %s", info(r.Owner), info(r.Repository), info(r.GitServer))
+
+	// get git config credentials helper
+	options := &credentials.StepGitCredentialsOptions{
+		OutputFile: "/root/.git-credentials",
+	}
+	err = options.Run()
+	if err != nil {
+		return repo, errors.Wrapf(err, "failed to initial git config credentials helper")
+	}
 
 	input := &scm.RepositoryInput{
 		Name: r.Repository,
