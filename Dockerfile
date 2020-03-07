@@ -53,4 +53,7 @@ RUN curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-re
 
 COPY --from=build /go/src/github.com/jenkins-x-labs/helmboot/build/linux/helmboot /usr/bin/helmboot
 
+RUN mkdir -p /home/bob/.config && \
+    chown -R 1000:1000 /home/bob
+
 USER bob
